@@ -15,16 +15,6 @@ TOOL.Information = {
 	{ name = "reload" }
 }
 
-local function SetTemperature(ply, ent, temp)
-    if IsValid(ent) then
-        if SERVER then
-            ent:SetEntityTemperature(ent, TOOL:GetClientNumber( "temp" ))
-        end
-        return true
-    end
-    return false
-end
-
 function TOOL:LeftClick(trace)
     local ent = trace.Entity
     if IsValid(ent) and ent:GetClass() == "prop_physics" then
