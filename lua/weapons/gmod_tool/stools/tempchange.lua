@@ -6,7 +6,7 @@ if CLIENT then
 end
 
 TOOL.Category = "Temperature Mod"
-TOOL.Name = "Temp Changer"
+TOOL.Name = "#tempmod.tempmod_tempchangertool"
 
 TOOL.ClientConVar[ "temp" ] = "200"
 
@@ -62,6 +62,6 @@ function TOOL:Reload(trace)
 end
 
 function TOOL.BuildCPanel(CPanel)
-    CPanel:AddControl("Header", { Description = "Change the temperature of an object." })
-    CPanel:AddControl( "Slider", { Label = "Temperature", Command = "tempchange_temp", Type = "Float", Min = -5000, Max = 5000 } )
+    CPanel:AddControl("Header", { Description = "#tempmod.tempmod_tempchangertooldesc" })
+    CPanel:AddControl( "Slider", { Label = "#tempmod.tempmod_temperature2", Command = "tempchange_temp", Type = "Float", Min = -5000, Max = 5000 } )
 end
