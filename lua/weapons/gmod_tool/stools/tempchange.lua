@@ -18,7 +18,7 @@ TOOL.Information = {
 local function SetTemperature(ply, ent, temp)
     if IsValid(ent) then
         if SERVER then
-            ply:SetEntityTemperature(ent,self:GetClientNumber( "temp" ))
+            ent:SetEntityTemperature(ent, TOOL:GetClientNumber( "temp" ))
         end
         return true
     end
@@ -56,9 +56,8 @@ end
 function TOOL:Reload(trace)
     local ent = trace.Entity
     if IsValid(ent) then
-        return SetTemperature(self:GetOwner(), ent, GetConVarNumber("tempmod_normal_temperature"))
+        ent:SetEntityTemperature(ent, GetConVar("tempmod_normal_temperature"):GetInt())
     end
-    return false
 end
 
 function TOOL.BuildCPanel(CPanel)

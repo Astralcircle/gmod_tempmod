@@ -24,6 +24,8 @@ function ent:UpdateEntityColor(ent)
         end
     end
 
+    if CLIENT then return end
+
     if self:GetEntityTemperature() >= 100 and self:GetEntityTemperature() < 999 then
         if self:GetMaterialType() and self:GetMaterialType() == MAT_METAL then
             if self:GetEntityTemperature() >= 50 then
