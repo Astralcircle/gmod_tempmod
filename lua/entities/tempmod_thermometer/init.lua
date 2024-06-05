@@ -11,6 +11,12 @@ function ENT:Initialize()
     self.temperature = 0
     self.soundPlayed = false
     self.type = 1
+    self.wire_disable = 0
+
+    if WireAddon then
+	self.Inputs = WireLib.CreateSpecialInputs(self, {"Disable", "Type"}, {"NORMAL", "NORMAL"})
+	self.Outputs = WireLib.CreateSpecialOutputs(self, {"Temperature"}, {"NORMAL"})
+    end
 
     local phys = self:GetPhysicsObject()
     if phys:IsValid() then
@@ -19,7 +25,17 @@ function ENT:Initialize()
 end
 
 function ENT:Think(activator, caller)
-    self:StartMeasureTemperature()
+    if WireAddon then
+	if self.wire_disable == 1 then return end
+	self:StartMeasureTemperature()
+	if self.type == 1 then
+	    WireLib.TriggerOutput(self, "Temperature", self.temperature)
+	else
+	    WireLib.TriggerOutput(self, "Temperature", math.Round(self.temperature*9/5+32, 1))
+	end
+    else
+	self:StartMeasureTemperature()
+    end
 end
 
 function ENT:Use(activator)
@@ -35,7 +51,7 @@ end
 
 function ENT:GetEntityTemperature(ent)
     if ent and ent.GetTemperature then
-        return ent:GetTemperature()
+	return ent:GetTemperature()
     else
         return nil
     end
@@ -92,4 +108,15 @@ function ENT:StartMeasureTemperature()
         else
             self:SetNWString("DisplayText", tostring(math.Round(self.temperature*9/5+32,1)).."°F")
         end
+
+    
+end
+
+function ENT:TriggerInput(iname, value)
+    if iname == "Disable" then
+	self.wire_disable = value
+	self:SetNWInt("Disable", value)
+    elseif iname == "Type" then
+	self.type = math.Clamp(value, 1, 2)
+    end
 end
