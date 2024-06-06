@@ -14,6 +14,10 @@ function ENT:Initialize()
 
     self:SetAngles(self:GetAngles() + Angle(0,180,0))
 
+    if WireAddon then
+	self.Inputs = WireLib.CreateSpecialInputs(self, {"Enable"}, {"NORMAL"})
+    end
+
     local phys = self:GetPhysicsObject()
     if phys:IsValid() then
         phys:Wake()
@@ -97,5 +101,16 @@ function ENT:StartMeasureTemperature()
             self:SetEntityTemperature(tr.Entity,temp + math.Rand(1,2))
         end
 
+    end
+end
+
+function ENT:TriggerInput(iname, value)
+    if iname == "Enable" then
+	self.enabled = math.Clamp(value, 0, 1)
+	if value == 1 then
+	    self:SetNW2Bool("Effect", true)
+	else
+	    self:SetNW2Bool("Effect", false)
+	end
     end
 end
