@@ -19,7 +19,7 @@ function ent:UpdateEntityColor(ent)
     if ent and ent:GetEntityTemperature() >= GetConVarNumber("tempmod_tempfordamage") and GetConVarNumber("tempmod_damageprops") == 1 or ent:GetEntityTemperature() <= -100 and GetConVarNumber("tempmod_damageprops") then
         ent:SetHealth(ent:Health()-1)
 
-        if ent:Health() and ent:Health() == 1 then
+        if SERVER and ent:Health() and ent:Health() == 1 then
             ent:Fire("Break") 
         end
     end
