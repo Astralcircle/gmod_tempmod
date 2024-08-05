@@ -14,10 +14,6 @@ function ENT:Initialize()
 
     self:SetAngles(self:GetAngles() + Angle(0,180,0))
 
-    if WireAddon then
-	self.Inputs = WireLib.CreateSpecialInputs(self, {"Enable"}, {"NORMAL"})
-    end
-
     local phys = self:GetPhysicsObject()
     if phys:IsValid() then
         phys:Wake()
@@ -43,7 +39,7 @@ function ENT:Use(activator)
 end
 
 function ENT:GetEntityTemperature(ent)
-    if ent and ent.GetTemperature then
+    if ent then
         return ent:GetTemperature()
     else
         return nil
@@ -82,7 +78,7 @@ function ENT:StartMeasureTemperature()
     end
 
     if tr.Hit and tr.Entity and !tr.HitWorld and self.enabled == 1 then
-        local temp = tr.Entity:GetEntityTemperature()
+        local temp = tr.Entity:GetTemperature()
 
         if tr.Entity:IsPlayer() or tr.Entity:IsNPC() then
             local dmg = DamageInfo()
@@ -98,19 +94,8 @@ function ENT:StartMeasureTemperature()
                 util.Effect("hot_metal", effectdata)
             end
         elseif tr.Entity:GetClass() == "prop_physics" then
-            self:SetEntityTemperature(tr.Entity,temp + math.Rand(1,2))
+            tr.Entity:SetTemperature(temp+math.Rand(1,3))
         end
 
-    end
-end
-
-function ENT:TriggerInput(iname, value)
-    if iname == "Enable" then
-	self.enabled = math.Clamp(value, 0, 1)
-	if value == 1 then
-	    self:SetNW2Bool("Effect", true)
-	else
-	    self:SetNW2Bool("Effect", false)
-	end
     end
 end

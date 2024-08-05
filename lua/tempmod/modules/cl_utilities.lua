@@ -18,7 +18,7 @@ hook.Add("PopulateToolMenu", "TemperatureModSettings", function()
         panel:ControlHelp( "#tempmod.tempmod_tempfordamagedesc" )
         --
         panel:Help( "#tempmod.tempmod_valuestitle" )
-		panel:NumSlider( "#tempmod.tempmod_decreasevalue", "tempmod_tempdecrease_value", 1, 50, 1 )
+		panel:NumSlider( "#tempmod.tempmod_decreasevalue", "tempmod_tempdecrease_value", 0, 50, 0 )
         panel:ControlHelp( "#tempmod.tempmod_decreasevaluedesc" )
         panel:NumSlider( "#tempmod.tempmod_increasevalue", "tempmod_tempincrease_value", 3, 50, 1 )
         panel:ControlHelp( "#tempmod.tempmod_increasevaluedesc" )
@@ -28,28 +28,32 @@ hook.Add("PopulateToolMenu", "TemperatureModSettings", function()
         panel:Help( "#tempmod.tempmod_realismtitle" )
 		panel:CheckBox( "#tempmod.tempmod.temperaturespread", "tempmod_tempspread" )
         panel:ControlHelp( "#tempmod.tempmod.temperaturespreaddesc" )
+        --
+        panel:Help( "Time" )
+		panel:NumSlider( "Decrease Temp Update", "tempmod_tempdecrease_updatetime", 1, 60, 0 )
+        panel:ControlHelp( "Update Time for temperature decrease. Affects optimization" )
+
+        panel:NumSlider( "Spread Temp Update", "tempmod_tempspread_updatetime", 2, 60, 0 )
+        panel:ControlHelp( "Update Time for temperature spread. Affects optimization" )
     end)
 
     spawnmenu.AddToolMenuOption("Utilities", "Temperature Mod", "tempmodclient", "#tempmod.tempmod_clientcategory", "", "", function(panel)
         panel:ClearControls()
         panel:Help( "#tempmod.tempmod_clienttitle" )
         panel:Help( "#tempmod.tempmod_optimizationtitle" )
-		panel:CheckBox( "#tempmod.tempmod_clienteffects", "tempmod_effects_enabled" )
-        panel:ControlHelp( "#tempmod.tempmod_clienteffectsdesc" )
         panel:CheckBox( "#tempmod.tempmod_clientglow", "tempmod_glow_enabled" )
         panel:ControlHelp( "#tempmod.tempmod_clientglowdesc" )
-        panel:NumSlider( "#tempmod.tempmod_clientglowcount", "tempmod_glow_max", 0, 5, 0 )
+        panel:NumSlider( "#tempmod.tempmod_clientglowcount", "tempmod_glow_max", 0, 7, 0 )
         panel:ControlHelp( "#tempmod.tempmod_clientglowdesc2" )
 	end )
 
     spawnmenu.AddToolMenuOption("Utilities", "Temperature Mod", "tempmodabout", "#tempmod.tempmod_aboutaddon", "", "", function(panel)
+
         panel:ClearControls()
         panel:Help( "#tempmod.tempmod_abouttempmod" )
         
         panel:Help( "#tempmod.tempmod_creatortitle" )
         panel:Help( "#tempmod.tempmod_testertitle" )
-
-        panel:Help( "#tempmod.tempmod_linktoaddon" )
         
 	end )
 end)
