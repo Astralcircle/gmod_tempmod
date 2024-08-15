@@ -1,45 +1,55 @@
 include("shared.lua")
 
+local color_blueblack = Color(200, 200, 255)
+local color_energyball = Color(0, 50, 255)
+local color_bendibeam = Color(100, 100, 255)
+local color_blue = Color(0, 0, 255)
+
+local material_blueblack = Material("effects/blueblacklargebeam")
+local material_ball = Material("effects/energyball")
+local material_bendbeam = Material("particle/bendibeam")
+local material_laser = Material("effects/laser1")
+local material_glow = Material("sprites/glow04_noz")
+
 function ENT:Draw()
-    if SERVER then return end
-        
-        local startPos = self:GetPos() + self:GetForward() * 20 + self:GetRight()*-1.7
-        local endPos = self:GetPos() + self:GetForward() * 1000
-        local tr = util.TraceLine({
-            start = startPos,
-            endpos = endPos,
-            filter = self
-        })
+    local selfpos = self:GetPos()
+    local selfforward = self:GetForward()
 
-        self:DrawModel()
+    local startPos = selfpos + selfforward * 20 + self:GetRight() * -1.7
+    local endPos = selfpos + selfforward * 1000
 
-        if self:GetNW2Bool("Effect") then
-        
+    local tr = util.TraceLine({
+        start = startPos,
+        endpos = endPos,
+        filter = self
+    })
+
+    self:DrawModel()
+
+    if self:GetNW2Bool("Effect") then
         local ang = self:GetAngles()
-        local pos = self:GetPos() + self:GetUp() * 3.5 + self:GetForward() * 1
+        local pos = selfpos + self:GetUp() * 3.5 + selfforward * 1
         
         ang:RotateAroundAxis(ang:Right(), 00)
         ang:RotateAroundAxis(ang:Up(), 90)
 
-        render.SetMaterial(Material("effects/blueblacklargebeam"))
-        render.DrawBeam(startPos, tr.HitPos, 1, 1, 5, Color(200,200,255))
+        local hit = tr.HitPos
 
-        render.SetMaterial(Material("effects/energyball"))
-        render.DrawBeam(startPos, tr.HitPos, 5, 1, 2, Color(0,50,255))
+        render.SetMaterial(material_blueblack)
+        render.DrawBeam(startPos, hit, 1, 1, 5, color_blueblack)
 
-        render.SetMaterial(Material("particle/bendibeam"))
-        render.DrawBeam(tr.HitPos - self:GetForward() * math.min(100, (tr.HitPos - self:GetPos()):Length() - 1), tr.HitPos, 7, math.random(1,5), 1, Color(100,100,255))
+        render.SetMaterial(material_ball)
+        render.DrawBeam(startPos, hit, 5, 1, 2, color_energyball)
 
-        render.SetMaterial(Material("effects/laser1"))
-        render.DrawBeam(startPos, tr.HitPos, 5, 1, 1, Color(0,0,255))
+        render.SetMaterial(material_bendbeam)
+        render.DrawBeam(hit - selfforward * math.min(100, (hit - selfpos):Length() - 1), hit, 7, math.random(1,5), 1, color_bendibeam)
 
-        render.SetMaterial(Material("sprites/glow04_noz"))
-        render.DrawSprite(startPos+self:GetForward()*7, 30, 30, Color(100,100,255))
+        render.SetMaterial(material_laser)
+        render.DrawBeam(startPos, hit, 5, 1, 1, color_blue)
 
-        render.SetMaterial(Material("sprites/glow04_noz"))
-        render.DrawSprite(tr.HitPos, math.Rand(1,10), math.Rand(1,10), Color(100,100,255))
-
-        render.SetMaterial(Material("sprites/glow04_noz"))
-        render.DrawSprite(tr.HitPos, math.Rand(5,20), math.Rand(5,20), Color(100,100,255))
+        render.SetMaterial(material_glow)
+        render.DrawSprite(startPos + selfforward * 7, 30, 30, color_bendibeam)
+        render.DrawSprite(hit, math.Rand(1,10), math.Rand(1,10), color_bendibeam)
+        render.DrawSprite(hit, math.Rand(5,20), math.Rand(5,20), color_bendibeam)
     end
 end

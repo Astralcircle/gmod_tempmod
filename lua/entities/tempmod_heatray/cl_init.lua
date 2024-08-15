@@ -1,45 +1,55 @@
 include("shared.lua")
 
+local color_red = Color(255, 0, 0)
+local color_orange = Color(255, 100, 0)
+local color_orange2 = Color(255, 150, 0)
+local color_yellow = Color(255, 255, 0)
+
+local material_bluebeam = Material("effects/blueblacklargebeam")
+local material_ball = Material("effects/energyball")
+local material_bendbeam = Material("particle/bendibeam")
+local material_cablenew = Material("cable/new_cable_lit")
+local material_glow = Material("sprites/glow04_noz")
+
 function ENT:Draw()
-    if SERVER then return end
-        
-        local startPos = self:GetPos() + self:GetForward() * 20 + self:GetRight()*-1.7
-        local endPos = self:GetPos() + self:GetForward() * 1000
-        local tr = util.TraceLine({
-            start = startPos,
-            endpos = endPos,
-            filter = self
-        })
+    local selfpos = self:GetPos()
+    local selfforward = self:GetForward()
 
-        self:DrawModel()
+    local startPos = selfpos + selfforward * 20 + self:GetRight() * -1.7
+    local endPos = selfpos + selfforward * 1000
+    
+    local tr = util.TraceLine({
+        start = startPos,
+        endpos = endPos,
+        filter = self
+    })
 
-        if self:GetNW2Bool("Effect") then
-        
+    self:DrawModel()
+
+    if self:GetNW2Bool("Effect") then
         local ang = self:GetAngles()
-        local pos = self:GetPos() + self:GetUp() * 3.5 + self:GetForward() * 1
+        local pos = selfpos + self:GetUp() * 3.5 + selfforward * 1
         
         ang:RotateAroundAxis(ang:Right(), 00)
         ang:RotateAroundAxis(ang:Up(), 90)
 
-        render.SetMaterial(Material("effects/blueblacklargebeam"))
-        render.DrawBeam(startPos, tr.HitPos, 10, 1, 5, Color(255,0,0))
+        local hit = tr.HitPos
 
-        render.SetMaterial(Material("effects/energyball"))
-        render.DrawBeam(startPos, tr.HitPos, 7, 1, 5, Color(255,100,0))
+        render.SetMaterial(material_bluebeam)
+        render.DrawBeam(startPos, hit, 10, 1, 5, color_red)
 
-        render.SetMaterial(Material("particle/bendibeam"))
-        render.DrawBeam(tr.HitPos - self:GetForward() * math.min(100, (tr.HitPos - self:GetPos()):Length() - 1), tr.HitPos, 7, math.random(1,5), 1, Color(255,255,0))
+        render.SetMaterial(material_ball)
+        render.DrawBeam(startPos, hit, 7, 1, 5, color_orange)
 
-        render.SetMaterial(Material("cable/new_cable_lit"))
-        render.DrawBeam(startPos, tr.HitPos, 0.5, 1, 1, Color(255,255,0))
+        render.SetMaterial(material_bendbeam)
+        render.DrawBeam(hit - selfforward * math.min(100, (hit - selfpos):Length() - 1), hit, 7, math.random(1,5), 1, color_yellow)
 
-        render.SetMaterial(Material("sprites/glow04_noz"))
-        render.DrawSprite(startPos+self:GetForward()*7, 30, 30, Color(255,150,0))
+        render.SetMaterial(material_cablenew)
+        render.DrawBeam(startPos, hit, 0.5, 1, 1, color_yellow)
 
-        render.SetMaterial(Material("sprites/glow04_noz"))
-        render.DrawSprite(tr.HitPos, math.Rand(1,10), math.Rand(1,10), Color(255,100,0))
-
-        render.SetMaterial(Material("sprites/glow04_noz"))
-        render.DrawSprite(tr.HitPos, math.Rand(5,20), math.Rand(5,20), Color(255,100,0))
+        render.SetMaterial(material_glow)
+        render.DrawSprite(startPos + selfforward * 7, 30, 30, color_orange2)
+        render.DrawSprite(hit, math.Rand(1,10), math.Rand(1,10), color_orange)
+        render.DrawSprite(hit, math.Rand(5,20), math.Rand(5,20), color_orange)
     end
 end
