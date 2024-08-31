@@ -41,9 +41,6 @@ function ENT:Draw()
         render.SetMaterial(material_ball)
         render.DrawBeam(startPos, hit, 5, 1, 2, color_energyball)
 
-        render.SetMaterial(material_bendbeam)
-        render.DrawBeam(hit - selfforward * math.min(100, (hit - selfpos):Length() - 1), hit, 7, math.random(1,5), 1, color_bendibeam)
-
         render.SetMaterial(material_laser)
         render.DrawBeam(startPos, hit, 5, 1, 1, color_blue)
 

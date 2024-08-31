@@ -12,6 +12,22 @@ function ENT:Initialize()
     self.soundPlayed = false
     self.type = 1
 
+    local sprite = ents.Create("env_sprite")
+    sprite:SetKeyValue("model", "sprites/glow03.vmt")
+    sprite:SetKeyValue("rendermode", "9")
+    sprite:SetPos(self:GetPos()+self:GetUp()*2+self:GetForward()*1)
+    sprite:SetKeyValue("scale", "0.25")
+    sprite:SetKeyValue("rendercolor", "150 150 150")
+    sprite:SetKeyValue("spawnflags", "0")
+    sprite:SetKeyValue("renderamt", "255")
+    sprite:SetParent(self)
+    sprite:Spawn()
+    sprite:Activate()
+
+    if WireLib then
+        self.Outputs = WireLib.CreateOutputs(self, {"Celsius"})
+    end
+
     local phys = self:GetPhysicsObject()
     if phys:IsValid() then
         phys:Wake()
@@ -20,6 +36,13 @@ end
 
 function ENT:Think(activator, caller)
     self:StartMeasureTemperature()
+
+    if WireLib then
+        WireLib.TriggerOutput(self, "Celsius", self.temperature)
+    end
+
+    self:NextThink(CurTime())
+    return true
 end
 
 function ENT:Use(activator)
@@ -51,7 +74,7 @@ function ENT:StartMeasureTemperature()
         filter = self
     })
 
-    if tr.Hit and tr.Entity and !tr.HitWorld then
+    if tr.Hit and tr.Entity and not tr.HitWorld then
         local temp = tr.Entity:GetTemperature()
 
         if tr.Entity:IsPlayer() then
@@ -67,7 +90,7 @@ function ENT:StartMeasureTemperature()
                 self.temperature = 36.6 
             end
             
-            if tr.Entity:GetModel() != "models/props_junk/gnome.mdl" then
+            if tr.Entity:GetModel() ~= "models/props_junk/gnome.mdl" then
                 if tr.Entity:WaterLevel() > 0 then
                     self.temperature = temp / tr.Entity:WaterLevel()
                 else
@@ -87,9 +110,9 @@ function ENT:StartMeasureTemperature()
         self.temperature = 0
     end
 
-        if self.type == 1 then
-            self:SetNWString("DisplayText", tostring(math.Round(self.temperature,1)).."°C")
-        else
-            self:SetNWString("DisplayText", tostring(math.Round(self.temperature*9/5+32,1)).."°F")
-        end
+    if self.type == 1 then
+        self:SetNWString("DisplayText", tostring(math.Round(self.temperature,1)).."°C")
+    else
+        self:SetNWString("DisplayText", tostring(math.Round(self.temperature*9/5+32,1)).."°F")
+    end
 end

@@ -51,11 +51,11 @@ function ENT:Draw()
     cam.End3D2D()
 
     render.SetMaterial(material_smokestack)
-    render.DrawBeam(startPos, tr.HitPos, 0.2, 1, 6, color_white)
+    render.DrawBeam(startPos, tr.HitPos, 0.25, 2, 6, color_white)
 
     render.SetMaterial(material_glow04_noz)
     render.DrawSprite(startPos + selfForward * 7, 8, 8, color_white)
 
     render.SetMaterial(material_glow04_noz)
-    render.DrawSprite(tr.HitPos, 25, 25, color_white)
+    render.DrawSprite(tr.HitPos, 5, 5, color_white)
 end

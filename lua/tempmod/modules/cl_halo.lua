@@ -5,7 +5,7 @@ local color_red = Color(255, 0, 0)
 local color_yellow = Color(255, 250, 0)
 
 hook.Add("PreDrawHalos", "AddHotMetalHalos", function()
-    if not tempmod_glow_enabled:GetBool() then return end
+    if not tempmod_glow_enabled or not tempmod_glow_enabled:GetBool() then return end
 
     local hotEntities = {}
     local count = 0

@@ -158,7 +158,7 @@ if SERVER then
 end
 
 hook.Add("EntityTakeDamage", "TemperatureByDamage", function(target, dmginfo)
-    if not IsValid(target) or not target.IsTemperatureAvaiable then return end
+    if not IsValid(target) or not target:IsTemperatureAvaiable() then return end
 
     local damagetype = dmginfo:GetDamageType()
     local damage = dmginfo:GetDamage()

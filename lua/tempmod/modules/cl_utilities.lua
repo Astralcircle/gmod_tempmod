@@ -50,10 +50,35 @@ hook.Add("PopulateToolMenu", "TemperatureModSettings", function()
     spawnmenu.AddToolMenuOption("Utilities", "Temperature Mod", "tempmodabout", "#tempmod.tempmod_aboutaddon", "", "", function(panel)
 
         panel:ClearControls()
-        panel:Help( "#tempmod.tempmod_abouttempmod" )
+        panel:Help("#tempmod.tempmod_abouttempmod")
         
-        panel:Help( "#tempmod.tempmod_creatortitle" )
-        panel:Help( "#tempmod.tempmod_testertitle" )
+        panel:Help("#tempmod.tempmod_creatortitle")
         
-	end )
+        panel:Help("#tempmod.tempmod_testertitle")
+
+        panel:Help("Cool dude: AstralCircle")
+        
+        local urlButton = vgui.Create("DButton", panel)
+        urlButton:SetText("Workshop")
+        urlButton:SizeToContents()
+        urlButton:SetTall(30)
+        urlButton:SetWide(200)
+        urlButton.DoClick = function()
+            gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/?id=3259220540")
+        end
+        
+        panel:AddItem(urlButton)
+
+        local urlButton = vgui.Create("DButton", panel)
+        urlButton:SetText("Addon Updates")
+        urlButton:SizeToContents()
+        urlButton:SetTall(20)
+        urlButton:SetWide(200)
+        urlButton.DoClick = function()
+            gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/changelog/3259220540")
+        end
+        
+        panel:AddItem(urlButton)
+        
+    end)
 end)

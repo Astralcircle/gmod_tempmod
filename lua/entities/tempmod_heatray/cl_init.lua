@@ -41,9 +41,6 @@ function ENT:Draw()
         render.SetMaterial(material_ball)
         render.DrawBeam(startPos, hit, 7, 1, 5, color_orange)
 
-        render.SetMaterial(material_bendbeam)
-        render.DrawBeam(hit - selfforward * math.min(100, (hit - selfpos):Length() - 1), hit, 7, math.random(1,5), 1, color_yellow)
-
         render.SetMaterial(material_cablenew)
         render.DrawBeam(startPos, hit, 0.5, 1, 1, color_yellow)
 
