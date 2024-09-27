@@ -39,7 +39,7 @@ function ENT:Draw()
         draw.RoundedBox(6, -85, -25, 170, 50, color_box)
 
         draw.SimpleText(
-            self:GetNWString("DisplayText", "No data"),
+            self:GetDisplayTemp() .. (self:GetCelsius() and "°C" or "°F"),
             "vcrosdfont",
             0, 0,
             color_white,

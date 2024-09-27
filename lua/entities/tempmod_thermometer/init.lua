@@ -48,8 +48,10 @@ end
 function ENT:Use(activator)
     if activator:IsPlayer() then
         if self.type == 1 then
+            self:SetCelsius(false)
             self.type = 2
         else
+            self:SetCelsius(true)
             self.type = 1
         end
         self:EmitSound("buttons/button14.wav",75,255,100,CHAN_AUTO)
@@ -110,9 +112,10 @@ function ENT:StartMeasureTemperature()
         self.temperature = 0
     end
 
+    
     if self.type == 1 then
-        self:SetNWString("DisplayText", tostring(math.Round(self.temperature,1)).."°C")
+        self:SetDisplayTemp(self.temperature)
     else
-        self:SetNWString("DisplayText", tostring(math.Round(self.temperature*9/5+32,1)).."°F")
+        self:SetDisplayTemp(self.temperature * 9 / 5 + 32)
     end
 end

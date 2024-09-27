@@ -26,7 +26,7 @@ function ENT:Draw()
 
     self:DrawModel()
 
-    if self:GetNW2Bool("Effect") then
+    if self:GetEffect() then
         local ang = self:GetAngles()
         local pos = selfpos + self:GetUp() * 3.5 + selfforward * 1
         

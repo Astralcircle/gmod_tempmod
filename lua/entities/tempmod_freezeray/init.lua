@@ -33,11 +33,11 @@ function ENT:Use(activator)
     if activator:IsPlayer() then
         if self.enabled == 1 then
             self.enabled = 0
-            self:SetNW2Bool("Effect",false)
+            self:SetEffect(false)
             self:EmitSound("vehicles/apc/apc_shutdown.wav",75,200,100,CHAN_AUTO)
         else
             self.enabled = 1
-            self:SetNW2Bool("Effect",true)
+            self:SetEffect(true)
             self:EmitSound("beams/beamstart5.wav",75,255,100,CHAN_AUTO)
         end
     end
@@ -106,9 +106,9 @@ function ENT:TriggerInput(iname, value)
 	self.enabled = math.Clamp(value, 0, 1)
 
         if value == 1 then
-            self:SetNW2Bool("Effect", true)
+            self:SetEffect(true)
         else
-            self:SetNW2Bool("Effect", false)
+            self:SetEffect(false)
         end
     end
 end
