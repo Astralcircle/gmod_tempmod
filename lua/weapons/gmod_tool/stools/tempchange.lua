@@ -17,7 +17,6 @@ TOOL.Information = {
     }
 }
 
-local effect_enabled = GetConVar("tempmod_effects_enabled")
 local normal_temp = GetConVar("tempmod_normal_temperature")
 
 function TOOL:LeftClick(trace)
@@ -27,22 +26,20 @@ function TOOL:LeftClick(trace)
         if SERVER then
             ent:SetTemperature(self:GetClientNumber("temp"))
 
-            if effect_enabled:GetBool() then
-                if self:GetClientNumber("temp") > 100 then
-                    local effectdata = EffectData()
+            if self:GetClientNumber("temp") > 100 then
+                local effectdata = EffectData()
 
-                    effectdata:SetOrigin(ent:GetPos() + ent:OBBCenter())
-                    effectdata:SetNormal(ent:GetUp())
+                effectdata:SetOrigin(ent:GetPos() + ent:OBBCenter())
+                effectdata:SetNormal(ent:GetUp())
 
-                    util.Effect("hot_metal", effectdata)
-                elseif self:GetClientNumber("temp") < -100 then
-                    local effectdata = EffectData()
+                util.Effect("hot_metal", effectdata)
+            elseif self:GetClientNumber("temp") < -100 then
+                local effectdata = EffectData()
 
-                    effectdata:SetOrigin(ent:GetPos() + ent:OBBCenter())
-                    effectdata:SetNormal(ent:GetUp())
+                effectdata:SetOrigin(ent:GetPos() + ent:OBBCenter())
+                effectdata:SetNormal(ent:GetUp())
 
-                    util.Effect("cold_metal", effectdata)
-                end
+                util.Effect("cold_metal", effectdata)
             end
         end
 
@@ -60,10 +57,11 @@ function TOOL:Reload(trace)
     local ent = trace.Entity
 
     if IsValid(ent) then
+        if CLIENT then return true end
         ent:SetTemperature(normal_temp:GetInt())
     end
 
-    return true
+    return false
 end
 
 local color_box = Color(40, 40, 40, 200)
@@ -84,5 +82,5 @@ end
 
 function TOOL.BuildCPanel(CPanel)
     CPanel:AddControl("Header", {Description = "Change the temperature of an object."})
-    CPanel:AddControl("Slider", {Label = "Temperature", Command = "tempchange_temp", Type = "Float", Min = -50000, Max = 50000})
+    CPanel:AddControl("Slider", {Label = "Temperature", Command = "tempchange_temp", Type = "Int", Min = -50000, Max = 50000})
 end

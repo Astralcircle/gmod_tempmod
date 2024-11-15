@@ -1,5 +1,3 @@
-AddCSLuaFile()
-
 local meta = FindMetaTable("Entity")
 
 function meta:IsTemperatureAvaiable()
