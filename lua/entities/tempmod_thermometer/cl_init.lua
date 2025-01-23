@@ -2,7 +2,7 @@ include("shared.lua")
 
 surface.CreateFont("vcrosdfont", {
     font = "VCR OSD Mono [RUS by Daymarius]",
-    size = 25,
+    size = 50,
     blursize = 0,
     exteded = false,
     underline = true,
@@ -16,6 +16,8 @@ local material_smokestack = Material("particle/smokestack")
 local material_glow04_noz = Material("sprites/glow04_noz")
 
 function ENT:Draw()
+    self:DrawModel()
+
     local startPos = self:GetPos()
     local selfForward = self:GetForward()
 
@@ -27,16 +29,14 @@ function ENT:Draw()
         filter = self
     })
 
-    self:DrawModel()
-    
     local ang = self:GetAngles()
     local pos = startPos + self:GetUp() * 3.5 + selfForward * 1
-    
+
     ang:RotateAroundAxis(ang:Right(), 00)
     ang:RotateAroundAxis(ang:Up(), 90)
-    
-    cam.Start3D2D(pos, ang, 0.1)
-        draw.RoundedBox(6, -85, -25, 170, 50, color_box)
+
+    cam.Start3D2D(pos, ang, 0.05)
+        draw.RoundedBox(6, -170, -50, 340, 100, color_box)
 
         draw.SimpleText(
             self:GetDisplayTemp() .. (self:GetCelsius() and "°C" or "°F"),
@@ -58,4 +58,8 @@ function ENT:Draw()
 
     render.SetMaterial(material_glow04_noz)
     render.DrawSprite(tr.HitPos, 5, 5, color_white)
+end
+
+function ENT:Think()
+
 end

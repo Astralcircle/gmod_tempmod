@@ -8,94 +8,93 @@ function ENT:Initialize()
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
     self:SetUseType(SIMPLE_USE)
-    self.temperature = 0
-    self.soundPlayed = false
-    self.enabled = 0
 
-    self:SetAngles(self:GetAngles() + Angle(0,180,0))
+    self:SetAngles(Angle(0, 180, 0))
 
-    local phys = self:GetPhysicsObject()
-    if phys:IsValid() then
-        phys:Wake()
+    if WireLib then
+        self.Inputs = WireLib.CreateSpecialInputs(self, {"Enable"}, {"NORMAL"})
     end
+
+    self:PhysWake()
+end
+
+function ENT:SpawnFunction(ply, tr, class)
+	if not tr.Hit then return end
+
+	local ent = ents.Create(class)
+	ent:SetPos(tr.HitPos)
+    ent:SetPlayer(ply)
+	ent:Spawn()
+
+	return ent
 end
 
 function ENT:Think()
-    self:StartMeasureTemperature()
+    if self.enabled then
+        self:StartMeasureTemperature()
+    end
 end
 
 function ENT:Use(activator)
     if activator:IsPlayer() then
-        if self.enabled == 1 then
-            self.enabled = 0
+        if self.enabled then
+            self.enabled = false
             self:SetEffect(false)
-            self:EmitSound("vehicles/apc/apc_shutdown.wav",75,200,100,CHAN_AUTO)
+            self:EmitSound("vehicles/apc/apc_shutdown.wav", 75, 200, 100, CHAN_AUTO)
         else
-            self.enabled = 1
+            self.enabled = true
             self:SetEffect(true)
-            self:EmitSound("beams/beamstart5.wav",75,255,100,CHAN_AUTO)
-        end
-    end
-end
-
-function ENT:GetEntityTemperature(ent)
-    if ent then
-        return ent:GetTemperature()
-    else
-        return nil
-    end
-end
-
-function ENT:SetEntityTemperature(ent, temp)
-    if ent and ent.SetTemperature then
-        ent:SetTemperature(temp)
-        if SERVER then
-            ent:SetNWFloat("Temperature", temp)
+            self:EmitSound("beams/beamstart5.wav", 75, 255, 100, CHAN_AUTO)
         end
     end
 end
 
 function ENT:StartMeasureTemperature()
     local startPos = self:GetPos()
-    local endPos = self:GetPos() + self:GetForward() * 1000
+    local endPos = startPos + self:GetForward() * 1000
 
-    local tr = util.TraceLine({
+    local ent = util.TraceLine({
         start = startPos,
         endpos = endPos,
         filter = self
-    })
+    }).Entity
 
-    if IsValid(tr.Entity) and tr.Entity:GetClass() == "tempmod_freezeray" and self.enabled == 1 then
-        if SERVER then
-            local effectdata = EffectData()
-            effectdata:SetOrigin(tr.Entity:GetPos()+tr.Entity:OBBCenter())
-            effectdata:SetNormal(tr.Entity:GetUp())
-            util.Effect("hot_metal", effectdata)
-        end
+    if not IsValid(ent) then return end
 
-        sound.Play("ambient/fire/ignite.wav", tr.Entity:GetPos(), 75, 255, 100)
-        tr.Entity:Remove()
+    if ent:GetClass() == "tempmod_freezeray" then
+        local effectdata = EffectData()
+        effectdata:SetOrigin(ent:GetPos() + ent:OBBCenter())
+        effectdata:SetNormal(ent:GetUp())
+        util.Effect("hot_metal", effectdata)
+
+        sound.Play("ambient/fire/ignite.wav", ent:GetPos(), 75, 255, 100)
+        ent:Remove()
+
+        return
     end
 
-    if tr.Hit and tr.Entity and !tr.HitWorld and self.enabled == 1 then
-        local temp = tr.Entity:GetTemperature()
+    if ent:IsPlayer() or ent:IsNPC() then
+        local dmg = DamageInfo()
+        local ply = self:GetPlayer()
 
-        if tr.Entity:IsPlayer() or tr.Entity:IsNPC() then
-            local dmg = DamageInfo()
-            dmg:SetDamage(70)
-            dmg:SetAttacker(self)
-            dmg:SetInflictor(self)
-            dmg:SetDamageType(DMG_BURN)
-            tr.Entity:TakeDamageInfo(dmg)
-            if GetConVarNumber("tempmod_effects_enabled") >= 1 then
-                local effectdata = EffectData()
-                effectdata:SetOrigin(tr.Entity:GetPos()+tr.Entity:OBBCenter())
-                effectdata:SetNormal(tr.Entity:GetUp())
-                util.Effect("hot_metal", effectdata)
-            end
-        elseif tr.Entity:GetClass() == "prop_physics" then
-            tr.Entity:SetTemperature(temp+math.Rand(1,3))
+        dmg:SetDamage(70)
+        dmg:SetAttacker(IsValid(ply) and ply or self)
+        dmg:SetInflictor(self)
+        dmg:SetDamageType(DMG_BURN)
+        ent:TakeDamageInfo(dmg)
+    elseif ent:IsTemperatureAvaiable() then
+        ent:SetTemperature(ent:GetTemperature() + math.Rand(1, 2))
+    end
+end
+
+function ENT:TriggerInput(iname, value)
+    if iname == "Enable" then
+        self.enabled = tobool(value)
+
+        if self.enabled then
+            self:SetEffect(true)
+        else
+            self:SetEffect(false)
         end
-
     end
 end
