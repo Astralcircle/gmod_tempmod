@@ -10,10 +10,14 @@ local material_ball = Material("effects/energyball")
 local material_laser = Material("effects/laser1")
 local material_glow = Material("sprites/glow04_noz")
 
+local oldeffect_state = false
+
 function ENT:Draw()
     self:DrawModel()
 
     if self:GetEffect() then
+        oldeffect_state = true
+
         local selfpos = self:GetPos()
         local selfforward = self:GetForward()
 
@@ -25,6 +29,9 @@ function ENT:Draw()
             endpos = endPos,
             filter = self
         }).HitPos
+
+        local mins, maxs = self:GetModelBounds()
+        self:SetRenderBoundsWS(self:LocalToWorld(mins), self:LocalToWorld(maxs) + selfforward * hit:Distance(startPos))
 
         local ang = self:GetAngles()
         ang:RotateAroundAxis(ang:Right(), 00)
@@ -43,6 +50,9 @@ function ENT:Draw()
         render.DrawSprite(startPos + selfforward * 7, 30, 30, color_bendibeam)
         render.DrawSprite(hit, math.Rand(1, 10), math.Rand(1, 10), color_bendibeam)
         render.DrawSprite(hit, math.Rand(5, 20), math.Rand(5, 20), color_bendibeam)
+    elseif oldeffect_state then
+        self:SetRenderBounds(self:GetModelBounds())
+        oldeffect_state = false
     end
 end
 

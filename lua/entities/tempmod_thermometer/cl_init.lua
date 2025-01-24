@@ -1,8 +1,8 @@
 include("shared.lua")
 
-surface.CreateFont("vcrosdfont", {
+surface.CreateFont("tempmod_font", {
     font = "VCR OSD Mono [RUS by Daymarius]",
-    size = 50,
+    size = 75,
     blursize = 0,
     exteded = false,
     underline = true,
@@ -23,14 +23,17 @@ function ENT:Draw()
 
     local endPos = startPos + selfForward * 1000
 
-    local tr = util.TraceLine({
+    local hit = util.TraceLine({
         start = startPos,
         endpos = endPos,
         filter = self
-    })
+    }).HitPos
 
     local ang = self:GetAngles()
     local pos = startPos + self:GetUp() * 3.5 + selfForward * 1
+
+    local mins, maxs = self:GetModelBounds()
+    self:SetRenderBoundsWS(self:LocalToWorld(mins), self:LocalToWorld(maxs) + selfForward * hit:Distance(startPos))
 
     ang:RotateAroundAxis(ang:Right(), 00)
     ang:RotateAroundAxis(ang:Up(), 90)
@@ -40,7 +43,7 @@ function ENT:Draw()
 
         draw.SimpleText(
             self:GetDisplayTemp() .. (self:GetCelsius() and "°C" or "°F"),
-            "vcrosdfont",
+            "tempmod_font",
             0, 0,
             color_white,
             TEXT_ALIGN_CENTER,
@@ -51,13 +54,13 @@ function ENT:Draw()
     cam.End3D2D()
 
     render.SetMaterial(material_smokestack)
-    render.DrawBeam(startPos, tr.HitPos, 0.25, 2, 6, color_white)
+    render.DrawBeam(startPos, hit, 0.25, 2, 6, color_white)
 
     render.SetMaterial(material_glow04_noz)
     render.DrawSprite(startPos + selfForward * 7, 8, 8, color_white)
 
     render.SetMaterial(material_glow04_noz)
-    render.DrawSprite(tr.HitPos, 5, 5, color_white)
+    render.DrawSprite(hit, 5, 5, color_white)
 end
 
 function ENT:Think()
