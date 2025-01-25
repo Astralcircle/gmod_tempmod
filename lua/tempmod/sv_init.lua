@@ -59,9 +59,7 @@ function meta:SetTemperature(num)
     local temp = self:GetTemperature()
 
     if damageprops:GetBool() and temp >= tempfordamage:GetInt() then
-        local hp = self:Health()
-        if !hp then return end
-        self:TakeDamage(15)
+        self:TakeDamage(math.min(self:Health() - 15, 0))
     end
 
     if not vFireInstalled then
